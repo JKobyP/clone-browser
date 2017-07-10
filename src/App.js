@@ -16,28 +16,12 @@ class Nav extends Component {
 }
 
 class Display extends Component {
-    getContent(repo,user) {
-        var val
-        let fetchurl = "/api/" + user + "/" + repo
-        fetch(fetchurl)
-            .then(function(response) {
-                if (!response.ok) {
-                    console.log("response not ok fetching " + fetchurl)
-                    return
-                }
-                var contentType = response.headers.get("content-type");
-                if(contentType && contentType.indexOf("application/json") !== -1) {
-                    val = response.json()
-                }
-                console.log("response not json fetching " + fetchurl)
-            })
-        return val
-    }
+
 
     render() {
         let repo = this.props.repo
         let user = this.props.user
-        let clones = this.getContent(repo, user)
+        let clones = this.props.clones
         return (<div>
         <h2>Display</h2>
             <div>
@@ -66,7 +50,31 @@ class App extends Component {
     let sep = url.lastIndexOf("/")
     this.repo = url.substring(sep + 1)
     this.user = url.substring(url.substring(0,sep).lastIndexOf("/")+1, sep)
+    this.prs = this.getPRs(this.repo, this.user)
+    this.activePR = {clones: null}
+    if (this.prs) {
+        this.activePR = this.prs[0]
+    }
   }
+
+    getPRs(repo,user) {
+        var val
+        let fetchurl = "/api/" + user + "/" + repo
+        fetch(fetchurl)
+            .then(function(response) {
+                if (!response.ok) {
+                    console.log("response not ok fetching " + fetchurl)
+                    return
+                }
+                var contentType = response.headers.get("content-type");
+                if(contentType && contentType.indexOf("application/json") !== -1) {
+                    val = response.json()
+                }
+                console.log("response not json fetching " + fetchurl)
+            })
+        return val
+    }
+
   render() {
     return (
       <div className="App">
@@ -75,10 +83,10 @@ class App extends Component {
           <h2>Welcome to React</h2>
         </div>
         <nav className="clone-nav" >
-            <Nav repo={this.repo} user={this.user} />
+            <Nav repo={this.repo} user={this.user} clones={this.activePR.clones} />
         </nav>
         <section className="clone-content" >
-            <Display repo={this.repo} user={this.user} />
+            <Display repo={this.repo} user={this.user} pr={this.activePR}/>
         </section>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
