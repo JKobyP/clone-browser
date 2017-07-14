@@ -7,12 +7,20 @@
     "react-dom": "^15.5.4"
   },
   "devDependencies": {
-    "react-scripts": "1.0.7"
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.4",
+    "file-loader": "^0.11.2",
+    "react-scripts": "1.0.7",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.2.0"
   },
   "babel": {
     "presets": [
-        "env",
-        "react"
+      "env",
+      "react"
     ]
   },
   "scripts": {
