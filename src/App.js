@@ -60,7 +60,7 @@ class App extends Component {
         this.state = {repo: null, user:null, prs: [], activePR:{id: null, clones: []}};
         let url = window.location.href;
         // determine if url is http(s)://something/something/something
-        if (!url.match('https?://[^/]+/[^/]+/[^/]+$')) {
+        if (!url.match('https?://[^/]+/pr/[^/]+/[^/]+$')) {
             console.log("badly formed url:");
             console.log(url);
             return;
