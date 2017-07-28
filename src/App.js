@@ -1,58 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {Head, Nav, Display} from './components.js';
 
-class Nav extends Component {
-    render() {
-        this.repo = this.props.repo;
-        this.user = this.props.user;
-        this.clones = this.props.clones;
-        return (
-            <div>
-            <h2>Nav</h2>
-            <ul>
-                {this.props.clones.map(c => <li> {c.label} </li>)}
-            </ul>
-            </div>
-        );
-    }
-}
 
-class Display extends Component {
-    render() {
-        let repo = this.props.repo;
-        let user = this.props.user;
-        let clones = this.props.clones;
-        return (
-            <div>
-                <h2>Display</h2>
-                <div>
-                    <p>{repo}</p>
-                    <p>{user}</p>
-                    <p>{clones}</p>
-                </div>
-            </div>
-        );
-    }
-}
-
-function Head(props) {
-    let onselect = function () {
-        var selection = document.GetElementById("prselect");
-        props.onSelect(selection.options[selection.selectedIndex].value);
-    }
-
-    return (
-        <div>
-        <h2> Head </h2>
-        <select id="prselect" onChange={onselect}>
-            {props.prs.map(function(pr) {
-                return <option value={pr.id}> {pr.id} </option>
-            })}
-        </select>
-        </div>
-    )
-}
 
 class App extends Component {
     constructor() {
@@ -60,7 +11,7 @@ class App extends Component {
         this.state = {repo: null, user:null, prs: [], activePR:{id: null, clones: []}};
         let url = window.location.href;
         // determine if url is http(s)://something/something/something
-        if (!url.match('https?://[^/]+/[^/]+/[^/]+$')) {
+        if (!url.match('https?://[^/]+/pr/[^/]+/[^/]+$')) {
             console.log("badly formed url:");
             console.log(url);
             return;
@@ -71,12 +22,13 @@ class App extends Component {
         let sep = url.lastIndexOf("/");
         let repo = url.substring(sep + 1);
         let user = url.substring(url.substring(0,sep).lastIndexOf("/")+1, sep);
+        let prs = this.getPRs(repo, user)
         this.state= {
             repo: repo,
             user: user,
-            prs: this.getPRs(repo, user),
-            activePR: this.state.prs && this.state.prs.length > 0 ?
-                        this.state.prs[0] : {id: null, clones: []},
+            prs: prs,
+            activePR: prs && prs.length > 0 ?
+                        prs[0] : {id: null, clones: []},
         };
     }
 
@@ -92,18 +44,19 @@ class App extends Component {
 
     getPRs(repo,user) {
         var val = [];
-        let fetchurl = "/api/" + user + "/" + repo;
+        let fetchurl = "/api/pr/" + user + "/" + repo;
         fetch(fetchurl)
             .then(function(response) {
                 if (!response.ok) {
                     console.log("response not ok fetching " + fetchurl);
                     return;
                 }
-                var contentType = response.headers.get("content-type");
+                var contentType = response.headers.get("Content-Type");
                 if(contentType && contentType.indexOf("application/json") !== -1) {
                     val = response.json();
+                } else {
+                    console.log("response not json fetching " + fetchurl);
                 }
-                console.log("response not json fetching " + fetchurl);
             })
         return val;
     }
