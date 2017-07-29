@@ -38,7 +38,7 @@ function Head(props) {
 
     return (
         <div>
-        <h2> Head </h2>}
+        <h2> Head </h2>
         <select id="prselect" onChange={onselect}>
             {props.prs.map(function(pr) {
                 return <option value={pr.id}> {pr.id} </option>

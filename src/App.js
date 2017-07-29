@@ -22,13 +22,14 @@ class App extends Component {
         let sep = url.lastIndexOf("/");
         let repo = url.substring(sep + 1);
         let user = url.substring(url.substring(0,sep).lastIndexOf("/")+1, sep);
-        let prs = this.getPRs(repo, user)
+        this.getPRs = this.getPRs.bind(this);
+        this.getPRs(repo, user);
+        let prs = []
         this.state= {
             repo: repo,
             user: user,
             prs: prs,
-            activePR: prs && prs.length > 0 ?
-                        prs[0] : {id: null, clones: []},
+            activePR: prs && prs.length > 0 ? prs[0] : {id: null, clones: []},
         };
     }
 
@@ -43,9 +44,8 @@ class App extends Component {
     }
 
     getPRs(repo,user) {
-        var val = [];
         let fetchurl = "/api/pr/" + user + "/" + repo;
-        fetch(fetchurl)
+       let promise = fetch(fetchurl)
             .then(function(response) {
                 if (!response.ok) {
                     console.log("response not ok fetching " + fetchurl);
@@ -53,12 +53,22 @@ class App extends Component {
                 }
                 var contentType = response.headers.get("Content-Type");
                 if(contentType && contentType.indexOf("application/json") !== -1) {
-                    val = response.json();
+                    return response.json();
                 } else {
                     console.log("response not json fetching " + fetchurl);
                 }
-            })
-        return val;
+            });
+       let action = function(json) {
+                let val = json
+                this.setState(
+                        {   repo: this.state.repo,
+                            user: this.state.user,
+                            prs: val,
+                            activePR: val.length > 0 ? val[0] : {id: 0, clones: null},
+                        })
+            }
+       action = action.bind(this)
+            promise.then(action)
     }
 
     render() {
