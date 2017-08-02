@@ -8,7 +8,7 @@ function newPR() {return {id: null, clones: [], files: []}}
 class App extends Component {
   constructor() {
     super();
-    this.state = {repo: null, user:null, prs: [], activePR:newPR()};
+    this.state = {repo: null, user:null, prs: [], activePR:newPR(), activeClone: null,};
     let url = window.location.href;
     // determine if url is http(s)://something/something/something
     if (!url.match('https?://[^/]+/pr/[^/]+/[^/]+$')) {
@@ -30,7 +30,20 @@ class App extends Component {
       user: user,
       prs: prs,
       activePR: prs && prs.length > 0 ? prs[0] : newPR(),
+      activeClone: null,
     };
+    this.changeActiveClone = this.changeActiveClone.bind(this);
+  }
+
+  changeActiveClone(clone) {
+    this.setState(
+      { repo: this.state.repo,
+        user: this.state.user,
+        prs: this.state.prs,
+        activePR: this.state.activePR,
+        activeClone: clone,
+      }
+        );
   }
 
   changeActivePR(pr) {
@@ -39,6 +52,7 @@ class App extends Component {
           user: this.state.user,
           prs: this.state.prs,
           activePR: pr,
+          activeClone: this.state.activeClone,
         }
         );
   }
@@ -85,11 +99,13 @@ class App extends Component {
               </header>
               <nav className="clone-nav" >
                 <Nav
-                  clones={this.state.activePR.clones} />
+                  clones={this.state.activePR.clones}
+                  onCloneSelect={this.changeActiveClone}/>
               </nav>
               <section className="clone-content" >
                 <Display
-                  pr={this.state.activePR}/>
+                  pr={this.state.activePR}
+                  selectedClone={this.state.activeClone}/>
               </section>
               <div className="clearfix"></div>
             </div>
