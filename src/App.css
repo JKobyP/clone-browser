@@ -2,14 +2,20 @@
   text-align: center;
 }
 
-div.App-content {
-  width: 80%;
-  max-width: 760px;
-  margin: 0 auto;
-}
-
 .App pre {
   text-align: left;
+}
+
+.App-header {
+  background-color: #222;
+  height: 50px;
+  padding: 10px;
+  color: white;
+}
+
+div.App-content {
+  width: 95%;
+  margin: 0 auto;
 }
 
 header.clone-head {
@@ -29,6 +35,10 @@ header.clone-head {
   margin-bottom: 8px;
 }
 
+.clone-nav .active {
+    font-weight: 900;
+}
+
 nav.clone-nav {
   vertical-align: top;
   max-width: 180px;
@@ -39,19 +49,25 @@ nav.clone-nav {
 }
 
 section.clone-content {
-  width: 74%;
+  width: 74.5%;
   padding: 2%;
   border: solid 1px;
   display: inline-block;
+}
+
+div.col1, div.col2 {
+    display: inline-block;
+    width: 50%;
+    vertical-align: top;
+}
+
+div.CodeView {
+    overflow: scroll;
+    height: 80vh;
 }
 
 .clearfix{
   clear:both
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
+

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-var Highlight = require('react-highlight')
+import SyntaxHighlighter from 'react-syntax-highlighter';
 import './codetheme.css'
 
 var emptyClone = {  First: {Filename: "", Byte: 0, End: 0},
@@ -28,12 +28,18 @@ function Head(props) {
 
 function Nav(props) {
   let clones = props.clones;
+  let activeClone = props.activeClone
   return (
       <div>
       <h2>Clones</h2>
       <ul>
       {props.clones.map(c =>
-          <Clone clone={c} onCloneSelect={props.onCloneSelect} />)}
+          <div className={activeClone && c == activeClone ? "active" : ""}>
+            <Clone
+                 clone={c}
+                 onCloneSelect={props.onCloneSelect} />
+          </div>
+                 )}
       </ul>
       </div>
       );
@@ -64,15 +70,23 @@ function CodeView(props) {
     section = window.atob(section);
     start = content.indexOf(section);
     end = start + section.length;
-    code =   (<Highlight className="c" innerHTML={true} element={element}>
-        {(<pre><code>{content.substring(0,start)}<mark>
-                    {content.substring(start,end)}</mark>
-                    {content.substring(end)}</code></pre>).render()}
-                </Highlight>);
+    end = content.indexOf("\n", end)
+    code =   (<div className="CodeView">
+                <SyntaxHighlighter language={"c"}>
+                    {content.substring(0,start)}
+                </SyntaxHighlighter>
+                <mark>
+                <SyntaxHighlighter language={"c"} customStyle={{backgroundColor: "yellow"}}>
+                    {content.substring(start,end)}
+                </SyntaxHighlighter>
+                </mark>
+                <SyntaxHighlighter language={"c"}>
+                    {content.substring(end)}
+                </SyntaxHighlighter>
+              </div>);
   }
   return (
         <div>
-          <h2> CodeView </h2>
           Path: {props.file.path}
           <br />
             {element}
@@ -93,22 +107,21 @@ function Display(props) {
   second = second ? second : emptyFile;
   return (
       <div>
-        <h2>Display</h2>
         <div className="col1">
-          <p><CodeView 
+          <CodeView
                 file={first}
                 start={clone.First.Byte}
                 end={clone.First.End}
             />
-          </p>
+          
         </div>
         <div className="col2">
-          <p><CodeView
+          <CodeView
                 file={second}
                 start={clone.Second.Byte}
                 end={clone.Second.End}
             />
-          </p>
+          
         </div>
       </div>
       );

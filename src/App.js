@@ -79,6 +79,8 @@ class App extends Component {
               user: this.state.user,
               prs: val,
               activePR: val.length > 0 ? val[0] : {id: 0, clones: null},
+              activeClone: val.length > 0 && val[0].clones.length > 0 
+                            ? val[0].clones[0] : null,
             })
     }).bind(this))
   }
@@ -100,6 +102,7 @@ class App extends Component {
               <nav className="clone-nav" >
                 <Nav
                   clones={this.state.activePR.clones}
+                  activeClone={this.state.activeClone}
                   onCloneSelect={this.changeActiveClone}/>
               </nav>
               <section className="clone-content" >
