@@ -33,8 +33,8 @@ function Nav(props) {
       <div>
       <h2>Clones</h2>
       <ul>
-      {props.clones.map(c =>
-          <div className={activeClone && c == activeClone ? "active" : ""}>
+      {props.clones.map((c,index) =>
+          <div key={index} className={activeClone && c == activeClone ? "active" : ""}>
             <Clone
                  clone={c}
                  onCloneSelect={props.onCloneSelect} />
@@ -66,11 +66,8 @@ function CodeView(props) {
   let start = 0;
   let end = 0;
   if (rawcontent != "") {
-    let section = rawcontent.substring(props.start, props.end);
-    section = window.atob(section);
-    start = content.indexOf(section);
-    end = start + section.length;
-    end = content.indexOf("\n", end)
+    start = content.lastIndexOf("\n", props.start/2) + 1; // dividing by two as a rough conversion from bytes to UTF-16
+    end = content.indexOf("\n", props.end/2);
     code =   (<div className="CodeView">
                 <SyntaxHighlighter language={"c"}>
                     {content.substring(0,start)}
@@ -100,10 +97,10 @@ function Display(props) {
   let clone = props.selectedClone ? props.selectedClone : emptyClone;
   let pr = props.pr ? props.pr : {files: [], path: ""};
   let first = pr.files.find(file =>
-                    file.path == clone.First.Filename.substring(1)); // fix this server side
+                    file.path == clone.First.Filename);
   first = first ? first : emptyFile;
   let second = pr.files.find(file =>
-                    file.path == clone.Second.Filename.substring(1));
+                    file.path == clone.Second.Filename);
   second = second ? second : emptyFile;
   return (
       <div>
